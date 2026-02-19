@@ -50,7 +50,8 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => {
     keys[e.key] = false;
 });
-canvas.addEventListener("click",()=>{py=py-h*4})
+//canvas.addEventListener("click",()=>{py=py-h*4})
+canvas.addEventListener("touchstart",()=>{py=py-h*4})
 /* ============================================================
    GAME STATE
    ============================================================ */
@@ -66,10 +67,10 @@ let score=0
 function pipes(){
     ctx.fillStyle="#00ff00"
     
-    ctx.fillRect(pipe1x, pipe1y1, w*2, h*20);ctx.fillRect(pipe1x, pipe1y2, w*2, h*(-20));
-    ctx.fillRect(pipe2x, pipe2y1, w*2, h*20);ctx.fillRect(pipe2x, pipe2y2, w*2, h*(-20));
-    ctx.fillRect(pipe3x, pipe3y1, w*2, h*20);ctx.fillRect(pipe3x, pipe3y2, w*2, h*(-20));
-    ctx.fillRect(pipe4x, pipe4y1, w*2, h*20);ctx.fillRect(pipe4x, pipe4y2, w*2, h*(-20));
+    ctx.fillRect(pipe1x,pipe1y1,w*2,((0-pipe1y1)*(-1)));ctx.fillRect(pipe1x,pipe1y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe1y2)));
+ctx.fillRect(pipe2x,pipe2y1,w*2,((0-pipe2y1)*(-1)));ctx.fillRect(pipe2x,pipe2y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe2y2)));
+ctx.fillRect(pipe3x,pipe3y1,w*2,((0-pipe3y1)*(-1)));ctx.fillRect(pipe3x,pipe3y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe3y2)));
+ctx.fillRect(pipe4x,pipe4y1,w*2,((0-pipe4y1)*(-1)));ctx.fillRect(pipe4x,pipe4y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe4y2)));
 }
 /* ============================================================
    MAIN LOOP
