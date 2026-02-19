@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Minimal 2D Engine JS</title>
+<style>
+    body {
+        margin: 0;
+        background: #111;
+        overflow: hidden;
+    }
+    canvas {
+        display: block;
+        margin: auto;
+        background: black;
+    }
+</style>
+</head>
+<body>
+
+<canvas id="game"></canvas>
+
+<script>
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const WINDOW_WIDTH = 800;
+const WINDOW_HEIGHT = 600;
+
+/* ============================================================
+   GLOBALS
+   ============================================================ */
+const canvas = document.getElementById("game");
+canvas.width = WINDOW_WIDTH;
+canvas.height = WINDOW_HEIGHT;
+
+const ctx = canvas.getContext("2d");
+
+let running = true;
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+const keys = {};
+
+window.addEventListener("keydown", (e) => {
+    keys[e.key] = true;
+});
+
+window.addEventListener("keyup", (e) => {
+    keys[e.key] = false;
+});
+
+/* ============================================================
+   RENDERER
+   ============================================================ */
+function clear_screen(color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+}
+
+function draw_rect(x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, w, h);
+}
+
+/* ============================================================
+   GAME STATE
+   ============================================================ */
+let px = 60;
+let py = 200;
+let w=20;let h=20;
+let maxh=400;let minh=300
+let pipe1x=400;let pipe1y1=400;let pipe1y2=pipe1y1-200;
+let pipe2x=500;let pipe2y1=440;let pipe2y2=pipe2y1-200;
+let pipe3x=600;let pipe3y1=400;let pipe3y2=pipe3y1-200;
+let pipe4x=700;let pipe4y1=440;let pipe4y2=pipe4y1-200;
+function pipes(){
+    draw_rect(pipe1x, pipe1y1, w*2, h*20, "#00ff00");draw_rect(pipe1x, pipe1y2, w*2, h*(-20), "#00ff00");
+    draw_rect(pipe2x, pipe2y1, w*2, h*20, "#00ff00");draw_rect(pipe2x, pipe2y2, w*2, h*(-20), "#00ff00");
+    draw_rect(pipe3x, pipe3y1, w*2, h*20, "#00ff00");draw_rect(pipe3x, pipe3y2, w*2, h*(-20), "#00ff00");
+    draw_rect(pipe4x, pipe4y1, w*2, h*20, "#00ff00");draw_rect(pipe4x, pipe4y2, w*2, h*(-20), "#00ff00");
+}
+/* ============================================================
+   MAIN LOOP
+   ============================================================ */
+function game_loop() {
+
+    if (!running) return;
+
+    /* ===== UPDATE ===== */
+    if (keys[" "])  py -= h*4;
+    
+    py=py+h
+    if(py===800)py=100
+    if(((py>pipe1y1||py<pipe1y2)&&(px===pipe1x||px===pipe1x+w))||
+((py>pipe2y1||py<pipe2y2)&&(px===pipe2x||px===pipe2x+w))||
+((py>pipe3y1||py<pipe3y2)&&(px===pipe3x||px===pipe3x+w))||
+((py>pipe4y1||py<pipe4y2)&&(px===pipe4x||px===pipe4x+w))){
+    pipe1x=400;pipe1y1=400;pipe1y2=pipe1y1-200;
+    pipe2x=500;pipe2y1=440;pipe2y2=pipe2y1-200;
+    pipe3x=600;pipe3y1=400;pipe3y2=pipe3y1-200;
+    pipe4x=700;pipe4y1=440;pipe4y2=pipe4y1-200;
+}
+
+    pipe1x=pipe1x-20
+    if(pipe1x===0){pipe1x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe1y1=f;pipe1y2=pipe1y1-200}
+    pipe2x=pipe2x-20
+    if(pipe2x===0){pipe2x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe2y1=f;pipe2y2=pipe2y1-200}
+    pipe3x=pipe3x-20
+    if(pipe3x===0){pipe3x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe3y1=f;pipe3y2=pipe3y1-200}
+    pipe4x=pipe4x-20
+    if(pipe4x===0){pipe4x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe4y1=f;pipe4y2=pipe4y1-200}
+    
+    /* ===== RENDER ===== */
+    clear_screen("#202020");         // dark gray
+    draw_rect(px, py, w, h, "#ffff00"); //bird
+    pipes()
+
+
+    setTimeout(() => {
+        requestAnimationFrame(game_loop);
+    }, 100);
+    
+}
+
+game_loop();
+
+</script>
+</body>
+</html>
