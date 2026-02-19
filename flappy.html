@@ -50,7 +50,7 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => {
     keys[e.key] = false;
 });
-
+canvas.addEventListener("click",()=>{py=py-h*4})
 /* ============================================================
    GAME STATE
    ============================================================ */
@@ -79,8 +79,10 @@ function game_loop() {
     if (!running) return;
 
     /* ===== UPDATE ===== */
-    if (keys[" "])  py -= h*4;
+    if(keys[" "]){py=py-h*4}
     
+
+
     py=py+h
     if(py===800)py=100
     if(((py>pipe1y1||py<pipe1y2)&&(px===pipe1x||px===pipe1x+w))||
