@@ -24,8 +24,9 @@
 /* ============================================================
    CONFIG
    ============================================================ */
-const WINDOW_WIDTH = 800;
-const WINDOW_HEIGHT = 600;
+let w=20; let h=20;
+const WINDOW_WIDTH = 40*w;
+const WINDOW_HEIGHT = 30*h;
 
 /* ============================================================
    GLOBALS
@@ -50,28 +51,50 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => {
     keys[e.key] = false;
 });
-//canvas.addEventListener("click",()=>{py=py-h*4})
-canvas.addEventListener("touchstart",()=>{py=py-h*4})
+canvas.addEventListener("touchstart",(e)=>{py=py-h*4;e.preventDefault()})
 /* ============================================================
    GAME STATE
    ============================================================ */
-let px = 60;
-let py = 200;
-let w=20;let h=20;
-let maxh=400;let minh=300
-let pipe1x=400;let pipe1y1=400;let pipe1y2=pipe1y1-200;
-let pipe2x=500;let pipe2y1=440;let pipe2y2=pipe2y1-200;
-let pipe3x=600;let pipe3y1=400;let pipe3y2=pipe3y1-200;
-let pipe4x=700;let pipe4y1=440;let pipe4y2=pipe4y1-200;
-let score=0
-function pipes(){
-    ctx.fillStyle="#00ff00"
-    
-    ctx.fillRect(pipe1x,pipe1y1,w*2,((0-pipe1y1)*(-1)));ctx.fillRect(pipe1x,pipe1y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe1y2)));
-ctx.fillRect(pipe2x,pipe2y1,w*2,((0-pipe2y1)*(-1)));ctx.fillRect(pipe2x,pipe2y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe2y2)));
-ctx.fillRect(pipe3x,pipe3y1,w*2,((0-pipe3y1)*(-1)));ctx.fillRect(pipe3x,pipe3y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe3y2)));
-ctx.fillRect(pipe4x,pipe4y1,w*2,((0-pipe4y1)*(-1)));ctx.fillRect(pipe4x,pipe4y2,w*2,-(WINDOW_HEIGHT-(WINDOW_HEIGHT-pipe4y2)));
+let px = 3*w;  // position in pixels, using scale
+let py = 10*h; // position in pixels, using scale
+
+// Initialize pipes with scaled positions and sizes
+let maxh=20*h; let minh=15*h;
+let pipe1x=20*w; 
+let pipe1y1=20*h; 
+let pipe1y2=pipe1y1 - 10*h; // subtract 10h for gap
+
+let pipe2x=25*w; 
+let pipe2y1=22*h; 
+let pipe2y2=pipe2y1 - 10*h;
+
+let pipe3x=30*w; 
+let pipe3y1=20*h; 
+let pipe3y2=pipe3y1 - 10*h;
+
+let pipe4x=35*w; 
+let pipe4y1=22*h; 
+let pipe4y2=pipe4y1 - 10*h;
+
+let score=0;
+
+function pipes() {
+    ctx.fillStyle="#00ff00";
+
+    // Draw pipes with scaled positions and heights
+    ctx.fillRect(pipe1x, pipe1y1, 2*w, (0 - pipe1y1) * (-1));
+    ctx.fillRect(pipe1x, pipe1y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe1y2)));
+
+    ctx.fillRect(pipe2x, pipe2y1, 2*w, (0 - pipe2y1) * (-1));
+    ctx.fillRect(pipe2x, pipe2y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe2y2)));
+
+    ctx.fillRect(pipe3x, pipe3y1, 2*w, (0 - pipe3y1) * (-1));
+    ctx.fillRect(pipe3x, pipe3y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe3y2)));
+
+    ctx.fillRect(pipe4x, pipe4y1, 2*w, (0 - pipe4y1) * (-1));
+    ctx.fillRect(pipe4x, pipe4y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe4y2)));
 }
+
 /* ============================================================
    MAIN LOOP
    ============================================================ */
@@ -80,47 +103,91 @@ function game_loop() {
     if (!running) return;
 
     /* ===== UPDATE ===== */
-    if(keys[" "]){py=py-h*4}
-    
+    if(keys[" "]) { py -= h*4; }
 
+    py += h; // gravity
 
-    py=py+h
-    if(py===800)py=100
-    if(((py>pipe1y1||py<pipe1y2)&&(px===pipe1x||px===pipe1x+w))||
-((py>pipe2y1||py<pipe2y2)&&(px===pipe2x||px===pipe2x+w))||
-((py>pipe3y1||py<pipe3y2)&&(px===pipe3x||px===pipe3x+w))||
-((py>pipe4y1||py<pipe4y2)&&(px===pipe4x||px===pipe4x+w))){
-    pipe1x=400;pipe1y1=400;pipe1y2=pipe1y1-200;
-    pipe2x=500;pipe2y1=440;pipe2y2=pipe2y1-200;
-    pipe3x=600;pipe3y1=400;pipe3y2=pipe3y1-200;
-    pipe4x=700;pipe4y1=440;pipe4y2=pipe4y1-200;
-    score=0
-}
+    // Prevent py from going below 0 (top of screen)
+    if(py < 0) py=0;
 
-    pipe1x=pipe1x-20
-    if(pipe1x===0){score=score+1;pipe1x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe1y1=f;pipe1y2=pipe1y1-200}
-    pipe2x=pipe2x-20
-    if(pipe2x===0){score=score+1;pipe2x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe2y1=f;pipe2y2=pipe2y1-200}
-    pipe3x=pipe3x-20
-    if(pipe3x===0){score=score+1;pipe3x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe3y1=f;pipe3y2=pipe3y1-200}
-    pipe4x=pipe4x-20
-    if(pipe4x===0){score=score+1;pipe4x=Math.floor(Math.random()*3+1)*20+400;f=Math.floor(Math.random()*(maxh-minh+1))+minh;pipe4y1=f;pipe4y2=pipe4y1-200}
-    
+    // Collision detection (with pipes)
+    if(
+        ((py > pipe1y1 || py < pipe1y2) && (px===pipe1x || px===pipe1x+2*w)) ||
+        ((py > pipe2y1 || py < pipe2y2) && (px===pipe2x || px===pipe2x+2*w)) ||
+        ((py > pipe3y1 || py < pipe3y2) && (px===pipe3x || px===pipe3x+2*w)) ||
+        ((py > pipe4y1 || py < pipe4y2) && (px===pipe4x || px===pipe4x+2*w))
+    ) {
+        // Reset pipes
+        pipe1x=20*w; 
+        pipe1y1=20*h; 
+        pipe1y2=pipe1y1 - 10*h;
+
+        pipe2x=25*w; 
+        pipe2y1=22*h; 
+        pipe2y2=pipe2y1 - 10*h;
+
+        pipe3x=30*w; 
+        pipe3y1=20*h; 
+        pipe3y2=pipe3y1 - 10*h;
+
+        pipe4x=35*w; 
+        pipe4y1=22*h; 
+        pipe4y2=pipe4y1 - 10*h;
+
+        score=0;
+    }
+
+    // Move pipes left
+    pipe1x -= 2*w;
+    pipe2x -= 2*w;
+    pipe3x -= 2*w;
+    pipe4x -= 2*w;
+
+    // Check if pipes have gone off screen and reset
+    if(pipe1x <= 0) {
+        score++;
+        pipe1x= (Math.floor(Math.random()*3)+1)*2*w + 20*w; // position ahead
+        let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
+        pipe1y1=f;
+        pipe1y2=pipe1y1 - 10*h;
+    }
+    if(pipe2x <= 0) {
+        score++;
+        pipe2x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
+        let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
+        pipe2y1=f;
+        pipe2y2=pipe2y1 - 10*h;
+    }
+    if(pipe3x <= 0) {
+        score++;
+        pipe3x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
+        let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
+        pipe3y1=f;
+        pipe3y2=pipe3y1 - 10*h;
+    }
+    if(pipe4x <= 0) {
+        score++;
+        pipe4x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
+        let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
+        pipe4y1=f;
+        pipe4y2=pipe4y1 - 10*h;
+    }
+
     /* ===== RENDER ===== */
-    ctx.fillStyle="#202020"
+    ctx.fillStyle="#202020";
     ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    ctx.fillStyle="#ffff00"         // dark gray
-    ctx.fillRect(px, py, w, h); //bird
-    pipes()
+    ctx.fillStyle="#ffff00"; // bird color
+    ctx.fillRect(px, py, w, h); // bird
 
-    ctx.fillStyle="#ff0000"
-    ctx.fillText("score:"+score, 0, 10);
-    
-    
+    pipes();
+
+    ctx.fillStyle="#ff0000";
+    ctx.font = "10px Arial";
+    ctx.fillText("score:" + score, 0, 10);
+
     setTimeout(() => {
         requestAnimationFrame(game_loop);
     }, 100);
-    
 }
 
 game_loop();
