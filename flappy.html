@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>flappy bird</title>
 <style>
     body {
@@ -13,6 +14,9 @@
         display: block;
         margin: auto;
         background: black;
+        touch-action: none;
+        width: 100vw;
+        height: 100vh;
     }
 </style>
 </head>
@@ -25,8 +29,9 @@
    CONFIG
    ============================================================ */
 let w=20; let h=20;
-const WINDOW_WIDTH = 40*w;
+const WINDOW_WIDTH = 20*w;
 const WINDOW_HEIGHT = 30*h;
+let scaleable=1
 
 /* ============================================================
    GLOBALS
@@ -51,13 +56,58 @@ window.addEventListener("keydown", (e) => {
 window.addEventListener("keyup", (e) => {
     keys[e.key] = false;
 });
-canvas.addEventListener("touchstart",(e)=>{py=py-h*4;e.preventDefault()})
+
+// Touch/click controls
+canvas.addEventListener("click", handleClick);
+canvas.addEventListener("touchstart", handleTouch);
+
+function handleClick(e) {
+    let rect = canvas.getBoundingClientRect();
+    let scaleX = WINDOW_WIDTH / rect.width;
+    let scaleY = WINDOW_HEIGHT / rect.height;
+    let x = (e.clientX - rect.left) * scaleX;
+    let y = (e.clientY - rect.top) * scaleY;
+    
+    // Check if clicking near "click to pause" text (top left area)
+    if(x < 150 && y < 20) {
+        if(gameon === 1) {
+            gameon = 0;
+        } else {
+            gameon = 1;
+        }
+    } else {
+        // Jump
+        vy = w;
+    }
+}
+
+function handleTouch(e) {
+    e.preventDefault();
+    let rect = canvas.getBoundingClientRect();
+    let scaleX = WINDOW_WIDTH / rect.width;
+    let scaleY = WINDOW_HEIGHT / rect.height;
+    let x = (e.touches[0].clientX - rect.left) * scaleX;
+    let y = (e.touches[0].clientY - rect.top) * scaleY;
+    
+    // Check if touching near "click to pause" text (top left area)
+    if(x < 150 && y < 20) {
+        if(gameon === 1) {
+            gameon = 0;
+        } else {
+            gameon = 1;
+        }
+    } else {
+        // Jump
+        vy = w;
+    }
+}
+
 /* ============================================================
    GAME STATE
    ============================================================ */
 let px = 4*w;  // position in pixels, using scale
 let py = 10*h; // position in pixels, using scale
-
+gameon=1
 // Initialize pipes with scaled positions and sizes
 let maxh=20*h; let minh=15*h;
 let pipe1x=20*w; 
@@ -77,22 +127,69 @@ let pipe4y1=22*h;
 let pipe4y2=pipe4y1 - 10*h;
 
 let score=0;
-
+let vy=0
 function pipes() {
-    ctx.fillStyle="#00ff00";
+    ctx.fillStyle="#00aa00";
 
     // Draw pipes with scaled positions and heights
+    ctx.fillRect(pipe1x-w/4, pipe1y1, 2*w+w/2, h/4)
     ctx.fillRect(pipe1x, pipe1y1, 2*w, (0 - pipe1y1) * (-1));
+    ctx.fillRect(pipe1x-w/4, pipe1y2, 2*w+w/2, h/4)
     ctx.fillRect(pipe1x, pipe1y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe1y2)));
 
+    ctx.fillRect(pipe2x-w/4, pipe2y1, 2*w+w/2, h/4)
     ctx.fillRect(pipe2x, pipe2y1, 2*w, (0 - pipe2y1) * (-1));
+    ctx.fillRect(pipe2x-w/4, pipe2y2, 2*w+w/2, h/4)
     ctx.fillRect(pipe2x, pipe2y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe2y2)));
 
+    ctx.fillRect(pipe3x-w/4, pipe3y1, 2*w+w/2, h/4)
     ctx.fillRect(pipe3x, pipe3y1, 2*w, (0 - pipe3y1) * (-1));
+    ctx.fillRect(pipe3x-w/4, pipe3y2, 2*w+w/2, h/4)
     ctx.fillRect(pipe3x, pipe3y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe3y2)));
 
+    ctx.fillRect(pipe4x-w/4, pipe4y1, 2*w+w/2, h/4)
     ctx.fillRect(pipe4x, pipe4y1, 2*w, (0 - pipe4y1) * (-1));
+    ctx.fillRect(pipe4x-w/4, pipe4y2, 2*w+w/2, h/4)
     ctx.fillRect(pipe4x, pipe4y2, 2*w, -(WINDOW_HEIGHT - (WINDOW_HEIGHT - pipe4y2)));
+}
+function bird(){
+    //ctx.fillStyle="#ffff00"; // bird color
+    //ctx.fillRect(px, py, w, h); // bird
+
+    //top
+    ctx.fillStyle="#ffff00";
+    ctx.fillRect(px+w/5, py, w/5, h/4);
+    ctx.fillRect(px+w/5*2, py, w/5, h/4);
+    ctx.fillStyle="#ffffff";
+    ctx.fillRect(px+w/5*3, py, w/5, h/4);
+    ctx.fillStyle="#000000";
+    ctx.fillRect(px+w/5*4, py, w/5, h/4);
+    //top y2
+    ctx.fillStyle="#ffff00";
+    ctx.fillRect(px, py+h/4, w/5, h/4);
+    ctx.fillRect(px+w/5, py+h/4, w/5, h/4);
+    ctx.fillRect(px+w/5*2, py+h/4, w/5, h/4);
+    ctx.fillStyle="#ffffff";
+    ctx.fillRect(px+w/5*3, py+h/4, w/5, h/4);
+    ctx.fillRect(px+w/5*4, py+h/4, w/5, h/4);
+    // y3
+    ctx.fillStyle="#ffff00";
+    ctx.fillRect(px, py+h/4*2, w/5, h/4);
+    ctx.fillRect(px+w/5, py+h/4*2, w/5, h/4);
+    ctx.fillRect(px+w/5*2, py+h/4*2, w/5, h/4);
+    ctx.fillRect(px+w/5*3, py+h/4*2, w/5, h/4);
+    ctx.fillRect(px+w/5*4, py+h/4*2, w/5, h/4);
+    ctx.fillStyle="#ff6200";
+    ctx.fillRect(px+w/5*5, py+h/4*2, w/5, h/4);
+    ctx.fillRect(px+w/5*6, py+h/4*2, w/5, h/4);
+    // y4
+    ctx.fillStyle="#ffff00";
+
+    ctx.fillRect(px+w/5, py+h/4*3, w/5, h/4);
+    ctx.fillRect(px+w/5*2, py+h/4*3, w/5, h/4);
+    ctx.fillRect(px+w/5*3, py+h/4*3, w/5, h/4);
+
+
 }
 
 /* ============================================================
@@ -100,13 +197,34 @@ function pipes() {
    ============================================================ */
 function game_loop() {
 
-    if (!running) return;
+    if(gameon===0){
+            if(keys["p"]) {
+                gameon=1
+            }
+            ctx.fillStyle="#005b67";
+            ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+            
+            bird()
+            pipes()
 
+            ctx.fillStyle="#ff0000";
+            ctx.font = "10px Arial";
+            ctx.fillText("paused", 0, 10);
+            ctx.fillStyle="#0000FF";
+            ctx.font = "40px Arial";
+            ctx.fillText("flappy bird", 100, 100);
+    }
+    else{
     /* ===== UPDATE ===== */
-    if(keys[" "]) { py -= h*4; }
-
-    py += h; // gravity
-
+    if(keys[" "]) {
+        vy=w
+    }
+    if(keys["p"]) {
+        gameon=0
+    }
+    
+    py -= vy; // gravity
+    vy= vy - w/4
     // Prevent py from going below 0 (top of screen)
     if(py < 0) py=0;
 
@@ -133,58 +251,62 @@ function game_loop() {
         pipe4x=35*w; 
         pipe4y1=22*h; 
         pipe4y2=pipe4y1 - 10*h;
-
+        py=0;
         score=0;
+        vy=0
     }
 
     // Move pipes left
-    pipe1x -= 2*w;
-    pipe2x -= 2*w;
-    pipe3x -= 2*w;
-    pipe4x -= 2*w;
+    pipe1x -= w;
+    pipe2x -= w;
+    pipe3x -= w;
+    pipe4x =9999
 
     // Check if pipes have gone off screen and reset
     if(pipe1x <= 0) {
         score++;
-        pipe1x= (Math.floor(Math.random()*3)+1)*2*w + 20*w; // position ahead
+        pipe1x= 300
+        //pipe1x= (Math.floor(Math.random()*3)+1)*2*w + 20*w; // position ahead
         let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
         pipe1y1=f;
         pipe1y2=pipe1y1 - 10*h;
     }
     if(pipe2x <= 0) {
         score++;
-        pipe2x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
+        pipe2x= 300
+        //pipe2x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
         let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
         pipe2y1=f;
         pipe2y2=pipe2y1 - 10*h;
     }
     if(pipe3x <= 0) {
         score++;
-        pipe3x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
+        pipe3x= 300
+        //pipe3x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
         let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
         pipe3y1=f;
         pipe3y2=pipe3y1 - 10*h;
     }
     if(pipe4x <= 0) {
         score++;
-        pipe4x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
+        pipe4x= 300
+        //pipe4x= (Math.floor(Math.random()*3)+1)*2*w + 20*w;
         let f= Math.floor(Math.random()*(maxh - minh +1)) + minh;
         pipe4y1=f;
         pipe4y2=pipe4y1 - 10*h;
     }
 
     /* ===== RENDER ===== */
-    ctx.fillStyle="#202020";
+    ctx.fillStyle="#005b67";
     ctx.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-    ctx.fillStyle="#ffff00"; // bird color
-    ctx.fillRect(px, py, w, h); // bird
+    bird();
 
     pipes();
 
     ctx.fillStyle="#ff0000";
     ctx.font = "10px Arial";
-    ctx.fillText("score:" + score, 0, 10);
-
+    ctx.fillText("score:" + score+"\nclick to pause", 0, 10);
+}
     setTimeout(() => {
         requestAnimationFrame(game_loop);
     }, 100);
@@ -195,4 +317,3 @@ game_loop();
 </script>
 </body>
 </html>
-
